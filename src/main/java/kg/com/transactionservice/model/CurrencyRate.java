@@ -3,8 +3,7 @@ package kg.com.transactionservice.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
@@ -15,6 +14,9 @@ import java.time.OffsetDateTime;
 @Setter
 @Entity
 @Table(name = "currency_rates")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CurrencyRate {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
