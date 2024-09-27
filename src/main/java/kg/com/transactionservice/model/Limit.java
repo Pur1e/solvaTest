@@ -41,4 +41,8 @@ public class Limit {
 	@Column(name = "category", nullable = false, length = 50)
 	private String category;
 	
+	@NotNull
+	@Column(name = "limit_account", nullable = false)
+	private Long limitAccount;
+	
 }

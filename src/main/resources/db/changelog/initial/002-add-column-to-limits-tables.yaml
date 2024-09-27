@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: new col limit_account to table limits
+      author: Dastan
+      changes:
+        - addColumn:
+            tableName: limits
+            columns:
+              - column:
+                  name: limit_account
+                  type: bigint
+                  constraints:
+                    nullable: false
