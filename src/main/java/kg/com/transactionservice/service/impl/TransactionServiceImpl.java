@@ -1,6 +1,7 @@
 package kg.com.transactionservice.service.impl;
 
 import kg.com.transactionservice.dto.TransactionDto;
+import kg.com.transactionservice.enums.Category;
 import kg.com.transactionservice.model.Transaction;
 import kg.com.transactionservice.repository.TransactionRepository;
 import kg.com.transactionservice.service.TransactionService;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +19,11 @@ public class TransactionServiceImpl implements TransactionService {
 	
 	@Override
 	public void save(TransactionDto t) {
+		if (Arrays.stream(Category.values())
+				.noneMatch(e -> e.name().equalsIgnoreCase(t.getExpenseCategory()))) {
+			throw new IllegalArgumentException("Invalid expense category: " + t.getExpenseCategory());
+		}
+		
 		Boolean limitExceeded = checkLimitExceeded(t.getAccountFrom());
 		
 		Transaction transaction = Transaction.builder()
