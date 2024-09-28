@@ -7,7 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -38,6 +38,6 @@ public class CurrencyRate {
 	
 	@ColumnDefault("now()")
 	@Column(name = "created_at")
-	private Instant createdAt;
+	private LocalDateTime createdAt;
 	
 }
