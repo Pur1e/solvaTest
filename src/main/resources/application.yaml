@@ -1,11 +1,12 @@
 server:
-  port: 5010
+  port: 8080
+
 spring:
   application:
     name: transaction-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:2345/
+    url: jdbc:postgresql://psql_db:5432/
     username: qwe
     password: qwe
   jpa:
