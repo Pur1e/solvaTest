@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/client")
 @RequiredArgsConstructor
 public class ClientController {
+	
 	private final TransactionService transactionService;
 	private final LimitService limitService;
 	
@@ -30,6 +31,4 @@ public class ClientController {
 		limitService.save(limit);
 		return ResponseEntity.ok().build();
 	}
-	
-	
 }

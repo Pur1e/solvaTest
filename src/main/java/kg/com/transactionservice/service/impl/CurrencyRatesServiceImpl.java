@@ -3,7 +3,7 @@ package kg.com.transactionservice.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
-import kg.com.transactionservice.enums.CurrencyPair;
+import kg.com.transactionservice.enums.CurrencyAndPair;
 import kg.com.transactionservice.model.CurrencyRate;
 import kg.com.transactionservice.repository.CurrencyRateRepository;
 import kg.com.transactionservice.service.CurrencyRatesService;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -33,7 +34,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 	private static final String api_key = "c8d4fe665a4d478fb6006f48cb8a4435";
 	private final CurrencyRateRepository currencyRateRepository;
 	private final OkHttpClient client = new OkHttpClient();
-	private final ObjectMapper mapper = new ObjectMapper();
+	private final ObjectMapper mapper;
 	
 	//Run after application starts
 	@PostConstruct
@@ -45,10 +46,10 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 	// Run every day at 12:00 AM
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void setCurrencyRateFromExternalApi() {
-		for (CurrencyPair pair : CurrencyPair.values()) {
-			String json = getCurrencyRateFromExternalApi(pair.getSymbol());
+		for (CurrencyAndPair pair : CurrencyAndPair.values()) {
+			String json = getCurrencyRateFromExternalApi(pair.getPair());
 			if (json == null) {
-				log.error("Failed to fetch currency rate for: {}", pair.getSymbol());
+				log.error("Failed to fetch currency rate for: {}", pair.getPair());
 				return;
 			}
 			try {
@@ -59,14 +60,13 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 				
 				CurrencyRate currencyRate = CurrencyRate.builder()
 						.rate(rate)
-						.rateDate(rateDate)
-						.currencyPair(pair.getSymbol())
+						.rateDate(rateDate).currencyPair(pair.getPair()).createdAt(LocalDateTime.now())
 						.build();
 				
 				currencyRateRepository.save(currencyRate);
-				log.info("Successfully saved currency rate for: {}", pair.getSymbol());
+				log.info("Successfully saved currency rate for: {}", pair.getPair());
 			} catch (Exception e) {
-				log.error("Error processing currency rate for {}: {}", pair.getSymbol(), e.getMessage());
+				log.error("Error processing currency rate for {}: {}", pair.getPair(), e.getMessage());
 			}
 		}
 	}
@@ -92,5 +92,16 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 	
 	private String getUrl(String currencyPair) {
 		return String.format("%s?symbol=%s&apikey=%s", url, currencyPair, api_key);
+	}
+	
+	protected CurrencyRate getActualCurrencyRate(String currencyShortname) {
+		String pair = CurrencyAndPair.findByCurrency(currencyShortname).getPair();
+		
+		if (pair == null) {
+			log.error("Invalid currency: {}", currencyShortname);
+			throw new IllegalArgumentException("Invalid currency: " + currencyShortname);
+		}
+		
+		return currencyRateRepository.findByCurrencyPair(pair).orElse(null);
 	}
 }

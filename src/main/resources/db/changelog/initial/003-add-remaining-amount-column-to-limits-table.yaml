@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: new col remaining_amount to table limits
+      author: Dastan
+      changes:
+        - addColumn:
+            tableName: limits
+            columns:
+              - column:
+                  name: remaining_amount
+                  type: decimal(15,2)
+                  constraints:
+                    nullable: false

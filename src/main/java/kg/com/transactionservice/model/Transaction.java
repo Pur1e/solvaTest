@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 @Getter
 @Setter
@@ -52,10 +51,4 @@ public class Transaction {
 	@ColumnDefault("false")
 	@Column(name = "limit_exceeded", nullable = false)
 	private Boolean limitExceeded = false;
-	
-	@NotNull
-	@ColumnDefault("now()")
-	@Column(name = "created_at", nullable = false)
-	private Instant createdAt;
-	
 }

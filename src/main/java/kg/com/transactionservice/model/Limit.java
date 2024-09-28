@@ -45,4 +45,7 @@ public class Limit {
 	@Column(name = "limit_account", nullable = false)
 	private Long limitAccount;
 	
+	@NotNull
+	@Column(name = "remaining_amount", precision = 15, scale = 2)
+	private BigDecimal remainingAmount;
 }
