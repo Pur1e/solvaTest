@@ -22,6 +22,5 @@ public class SetLimitRequest {
 	private BigDecimal limitSum;
 	
 	@NotNull(message = "Account cannot be null")
-	@Size(min = 10, max = 10, message = "Account must be exactly 10 digits")
 	private Long limitAccount;
 }

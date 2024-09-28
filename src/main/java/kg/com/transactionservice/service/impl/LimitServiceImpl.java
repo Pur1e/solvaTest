@@ -34,6 +34,7 @@ public class LimitServiceImpl implements LimitService {
 				.limitCurrencyShortname("USD")
 				.remainingAmount(l.getLimitSum())
 				.build();
+		
 		limitRepository.save(limit);
 	}
 	
@@ -45,6 +46,7 @@ public class LimitServiceImpl implements LimitService {
 		limitRepository.save(limit);
 	}
 	
+	//reset monthly limit at first day of month
 	@Scheduled(cron = "0 0 0 1 * ?")
 	private void resetMonthlyLimits() {
 		limitRepository.findAll().forEach(limit -> {
