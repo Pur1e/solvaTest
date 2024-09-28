@@ -1,4 +1,4 @@
-package kg.com.transactionservice.dto;
+package kg.com.transactionservice.dto.transaction;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionDto {
+public class SetTransactionRequest {
 	private Long id;
 	
 	@NotNull(message = "Sender account cannot be null")

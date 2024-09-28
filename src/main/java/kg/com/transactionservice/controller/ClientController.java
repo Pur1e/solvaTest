@@ -1,16 +1,16 @@
 package kg.com.transactionservice.controller;
 
 import jakarta.validation.Valid;
-import kg.com.transactionservice.dto.TransactionDto;
+import kg.com.transactionservice.dto.transaction.SetTransactionRequest;
 import kg.com.transactionservice.dto.limit.SetLimitRequest;
+import kg.com.transactionservice.dto.transaction.TransactionReportDto;
 import kg.com.transactionservice.service.LimitService;
 import kg.com.transactionservice.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/client")
@@ -21,7 +21,7 @@ public class ClientController {
 	private final LimitService limitService;
 	
 	@PostMapping("/transactions")
-	public ResponseEntity<?> addTransaction(@RequestBody @Valid TransactionDto transaction) {
+	public ResponseEntity<?> addTransaction(@RequestBody @Valid SetTransactionRequest transaction) {
 		transactionService.save(transaction);
 		return ResponseEntity.ok().build();
 	}
@@ -30,5 +30,11 @@ public class ClientController {
 	public ResponseEntity<?> addLimit(@RequestBody @Valid SetLimitRequest limit) {
 		limitService.save(limit);
 		return ResponseEntity.ok().build();
+	}
+	
+	@GetMapping("/transactions/limit-exceeded")
+	public ResponseEntity<List<TransactionReportDto>> getLimitExceedTransactions(@RequestParam Long userId) {
+		List<TransactionReportDto> report = transactionService.getLimitExceededTransaction(userId);
+		return ResponseEntity.ok(report);
 	}
 }
