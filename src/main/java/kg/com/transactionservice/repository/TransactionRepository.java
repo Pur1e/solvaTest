@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 	
-	List<Transaction> findByAccountFromAndLimitExceededTrue(Long userId);
+	List<Transaction> findByAccountFromAndLimitExceededTrue(String userId);
 	
 }
 

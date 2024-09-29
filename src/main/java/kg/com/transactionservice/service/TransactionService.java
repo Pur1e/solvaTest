@@ -9,5 +9,5 @@ public interface TransactionService {
 	
 	void save(SetTransactionRequest transaction);
 	
-	List<TransactionReportDto> getLimitExceededTransaction(Long userId);
+	List<TransactionReportDto> getLimitExceededTransaction(String userId);
 }

@@ -1,6 +1,7 @@
 package kg.com.transactionservice.dto.transaction;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,11 +18,15 @@ import java.time.OffsetDateTime;
 public class SetTransactionRequest {
 	private Long id;
 	
+	@Size(min = 10, max = 10, message = "must consist of exactly 10 digits")
 	@NotNull(message = "Sender account cannot be null")
-	private Long accountFrom;
+	@Pattern(regexp = "\\d+", message = "Account can only contain digits")
+	private String accountFrom;
 	
+	@Size(min = 10, max = 10, message = "must consist of exactly 10 digits")
 	@NotNull(message = "Recipient account cannot be null")
-	private Long accountTo;
+	@Pattern(regexp = "\\d+", message = "Account can only contain digits")
+	private String accountTo;
 	
 	@NotNull(message = "Currency short name cannot be null")
 	@Size(min = 3, max = 3, message = "Currency short name must consist of exactly three letters")

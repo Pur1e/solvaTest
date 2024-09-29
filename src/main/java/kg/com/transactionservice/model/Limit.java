@@ -42,10 +42,12 @@ public class Limit {
 	private String category;
 	
 	@NotNull
-	@Column(name = "limit_account", nullable = false)
-	private Long limitAccount;
-	
-	@NotNull
 	@Column(name = "remaining_amount", precision = 15, scale = 2)
 	private BigDecimal remainingAmount;
+	
+	@Size(min = 10, max = 10)
+	@NotNull
+	@Column(name = "account", nullable = false, length = 10)
+	private String account;
+	
 }

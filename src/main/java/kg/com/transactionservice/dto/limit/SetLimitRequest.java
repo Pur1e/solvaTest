@@ -1,6 +1,7 @@
 package kg.com.transactionservice.dto.limit;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,8 @@ public class SetLimitRequest {
 	@NotNull
 	private BigDecimal limitSum;
 	
+	@Size(min = 10, max = 10, message = "must consist of exactly 10 digits")
 	@NotNull(message = "Account cannot be null")
-	private Long limitAccount;
+	@Pattern(regexp = "\\d+", message = "Account can only contain digits")
+	private String account;
 }

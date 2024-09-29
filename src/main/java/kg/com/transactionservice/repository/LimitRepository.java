@@ -13,9 +13,9 @@ public interface LimitRepository extends JpaRepository<Limit, Long> {
 	
 	@Query(value = """
 			SELECT * FROM limits l
-			WHERE l.limit_account =:account
+			WHERE l.account =:account
 			AND l.category =:category
 			ORDER BY l.limit_datetime ASC
 			""", nativeQuery = true)
-	List<Limit> findByLimitAccountAndCategory(@Param("account") Long account, @Param("category") String category);
+	List<Limit> findByLimitAccountAndCategory(@Param("account") String account, @Param("category") String category);
 }

@@ -48,7 +48,7 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 	
 	@Override
-	public List<TransactionReportDto> getLimitExceededTransaction(Long userId) {
+	public List<TransactionReportDto> getLimitExceededTransaction(String userId) {
 		List<Transaction> exceededTransactions = transactionRepository.findByAccountFromAndLimitExceededTrue(userId);
 		
 		return exceededTransactions.stream()

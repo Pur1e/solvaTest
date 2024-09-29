@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: modify columns account_from and account_to to varchar(10) from transactions table
+      author: Dastan
+      changes:
+        - modifyDataType:
+            tableName: transactions
+            columnName: account_from
+            newDataType: varchar(10)
+        - modifyDataType:
+            tableName: transactions
+            columnName: account_to
+            newDataType: varchar(10)
+
+  - changeSet:
+      id: modify column limit_account to varchar(10) and rename to account  limits table
+      author: Dastan
+      changes:
+        - modifyDataType:
+            tableName: limits
+            columnName: limit_account
+            newDataType: varchar(10)
+        - renameColumn:
+            tableName: limits
+            oldColumnName: limit_account
+            newColumnName: account

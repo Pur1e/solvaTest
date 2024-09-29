@@ -27,7 +27,7 @@ public class LimitServiceImpl implements LimitService {
 		}
 		
 		Limit limit = Limit.builder()
-				.limitAccount(l.getLimitAccount())
+				.account(l.getAccount())
 				.limitSum(l.getLimitSum())
 				.category(l.getCategory())
 				.limitDatetime(OffsetDateTime.now())
@@ -38,7 +38,7 @@ public class LimitServiceImpl implements LimitService {
 		limitRepository.save(limit);
 	}
 	
-	protected List<Limit> getLimitByUserAndCategory(Long account, String category) {
+	public List<Limit> getLimitByUserAndCategory(String account, String category) {
 		return limitRepository.findByLimitAccountAndCategory(account, category);
 	}
 	

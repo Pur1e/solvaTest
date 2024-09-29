@@ -18,4 +18,5 @@ public class LimitDto {
 	private String limitCurrencyShortname;
 	private OffsetDateTime limitDatetime;
 	private String category;
+	private String account;
 }

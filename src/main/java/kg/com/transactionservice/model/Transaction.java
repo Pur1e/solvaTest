@@ -21,14 +21,6 @@ public class Transaction {
 	@Column(name = "id", nullable = false)
 	private Long id;
 	
-	@NotNull
-	@Column(name = "account_from", nullable = false)
-	private Long accountFrom;
-	
-	@NotNull
-	@Column(name = "account_to", nullable = false)
-	private Long accountTo;
-	
 	@Size(max = 3)
 	@NotNull
 	@Column(name = "currency_shortname", nullable = false, length = 3)
@@ -51,4 +43,14 @@ public class Transaction {
 	@ColumnDefault("false")
 	@Column(name = "limit_exceeded", nullable = false)
 	private Boolean limitExceeded = false;
+	
+	@Size(min = 10, max = 10)
+	@NotNull
+	@Column(name = "account_from", nullable = false, length = 10)
+	private String accountFrom;
+	
+	@Size(min = 10, max = 10)
+	@NotNull
+	@Column(name = "account_to", nullable = false, length = 10)
+	private String accountTo;
 }
