@@ -8,6 +8,7 @@ import kg.com.transactionservice.model.Transaction;
 import kg.com.transactionservice.repository.TransactionRepository;
 import kg.com.transactionservice.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -29,6 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
 	public void save(SetTransactionRequest t) {
 		if (Arrays.stream(Category.values())
 				.noneMatch(e -> e.name().equalsIgnoreCase(t.getExpenseCategory()))) {
+			log.error("Invalid expense category: {}", t.getExpenseCategory());
 			throw new IllegalArgumentException("Invalid expense category: " + t.getExpenseCategory());
 		}
 		
@@ -44,13 +47,14 @@ public class TransactionServiceImpl implements TransactionService {
 		Boolean limitExceeded = checkLimitExceeded(transaction);
 		transaction.setLimitExceeded(limitExceeded);
 		
+		log.info("Saving transaction: {}", transaction);
 		transactionRepository.save(transaction);
 	}
 	
 	@Override
 	public List<TransactionReportDto> getLimitExceededTransaction(String userId) {
 		List<Transaction> exceededTransactions = transactionRepository.findByAccountFromAndLimitExceededTrue(userId);
-		
+		log.info("Exceeded transactions: {}", exceededTransactions);
 		return exceededTransactions.stream()
 				.map(this :: mapTransactionReportDto)
 				.toList();
@@ -70,14 +74,16 @@ public class TransactionServiceImpl implements TransactionService {
 				.dateTime(t.getDatetime())
 				.limitSum(limit.getLimitSum())
 				.currency(limit.getLimitCurrencyShortname())
+				.limitExceeded(t.getLimitExceeded())
 				.build();
 	}
 	
 	private Boolean checkLimitExceeded(Transaction t) {
+		log.info("Checking limit exceeded transaction: {}", t);
 		BigDecimal transactionAmountInUsd = convertToUSD(t.getCurrencyShortname(), t.getAmount());
 		
 		List<Limit> limits = limitService.getLimitByUserAndCategory(t.getAccountFrom(), t.getExpenseCategory());
-		
+		log.info("Limits found: {}", limits);
 		Limit applicableLimit = null;
 		
 		for (Limit limit : limits) {
@@ -85,18 +91,19 @@ public class TransactionServiceImpl implements TransactionService {
 				applicableLimit = limit;
 			}
 		}
-		
+		log.info("Applicable limit found: {}", applicableLimit);
 		if (applicableLimit == null) {
 			throw new IllegalStateException("No applicable limit found for this transaction");
 		}
 		
 		applicableLimit.setRemainingAmount(applicableLimit.getRemainingAmount().subtract(transactionAmountInUsd));
 		limitService.updateRemainingAmount(applicableLimit);
-		
+
 		return transactionAmountInUsd.compareTo(applicableLimit.getRemainingAmount()) > 0;
 	}
 	
 	private BigDecimal convertToUSD(String currencyCode, BigDecimal amount) {
+		log.info("Converting amount {} to {}", amount, currencyCode);
 		BigDecimal exchangeRate = currencyRatesService.getActualCurrencyRate(currencyCode).getRate();
 		return amount.divide(exchangeRate, RoundingMode.HALF_UP);
 	}

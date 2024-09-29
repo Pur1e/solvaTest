@@ -6,6 +6,7 @@ import kg.com.transactionservice.model.Limit;
 import kg.com.transactionservice.repository.LimitRepository;
 import kg.com.transactionservice.service.LimitService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LimitServiceImpl implements LimitService {
@@ -23,6 +25,7 @@ public class LimitServiceImpl implements LimitService {
 	public void save(SetLimitRequest l) {
 		if (Arrays.stream(Category.values())
 				.noneMatch(e -> e.name().equalsIgnoreCase(l.getCategory()))) {
+			log.error("Invalid category: {}", l.getCategory());
 			throw new IllegalArgumentException("Invalid category: " + l.getCategory());
 		}
 		
@@ -36,14 +39,17 @@ public class LimitServiceImpl implements LimitService {
 				.build();
 		
 		limitRepository.save(limit);
+		log.info("Saving limit {}", limit);
 	}
 	
 	public List<Limit> getLimitByUserAndCategory(String account, String category) {
+		log.info("getLimitByUserAndCategory account: {} category: {}", account, category);
 		return limitRepository.findByLimitAccountAndCategory(account, category);
 	}
 	
 	protected void updateRemainingAmount(Limit limit) {
 		limitRepository.save(limit);
+		log.info("Updated remaining amount to {}", limit.getLimitSum());
 	}
 	
 	//reset monthly limit at first day of month
@@ -53,5 +59,6 @@ public class LimitServiceImpl implements LimitService {
 			limit.setRemainingAmount(limit.getLimitSum());
 			limitRepository.save(limit);
 		});
+		log.info("Reset monthly limits");
 	}
 }

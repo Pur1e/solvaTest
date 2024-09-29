@@ -18,4 +18,5 @@ public class TransactionReportDto {
 	private BigDecimal transactionAmount;
 	private BigDecimal limitSum;
 	private String currency;
+	private Boolean limitExceeded;
 }

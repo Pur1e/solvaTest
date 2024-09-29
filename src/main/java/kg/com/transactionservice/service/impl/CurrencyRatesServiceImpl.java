@@ -94,7 +94,7 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
 		return String.format("%s?symbol=%s&apikey=%s", url, currencyPair, api_key);
 	}
 	
-	protected CurrencyRate getActualCurrencyRate(String currencyShortname) {
+	public CurrencyRate getActualCurrencyRate(String currencyShortname) {
 		String pair = CurrencyAndPair.findByCurrency(currencyShortname).getPair();
 		
 		if (pair == null) {
