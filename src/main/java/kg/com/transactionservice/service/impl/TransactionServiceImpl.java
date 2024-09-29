@@ -1,5 +1,6 @@
 package kg.com.transactionservice.service.impl;
 
+import kg.com.transactionservice.dto.limit.SetLimitRequest;
 import kg.com.transactionservice.dto.transaction.SetTransactionRequest;
 import kg.com.transactionservice.dto.transaction.TransactionReportDto;
 import kg.com.transactionservice.enums.Category;
@@ -44,7 +45,7 @@ public class TransactionServiceImpl implements TransactionService {
 				.expenseCategory(t.getExpenseCategory())
 				.build();
 		
-		Boolean limitExceeded = checkLimitExceeded(transaction);
+		Boolean limitExceeded = isCheckLimitExceeded(transaction);
 		transaction.setLimitExceeded(limitExceeded);
 		
 		log.info("Saving transaction: {}", transaction);
@@ -78,13 +79,25 @@ public class TransactionServiceImpl implements TransactionService {
 				.build();
 	}
 	
-	private Boolean checkLimitExceeded(Transaction t) {
+	private Boolean isCheckLimitExceeded(Transaction t) {
 		log.info("Checking limit exceeded transaction: {}", t);
 		BigDecimal transactionAmountInUsd = convertToUSD(t.getCurrencyShortname(), t.getAmount());
 		
 		List<Limit> limits = limitService.getLimitByUserAndCategory(t.getAccountFrom(), t.getExpenseCategory());
+		if (limits.isEmpty()) {
+			limitService.save(
+					SetLimitRequest.builder()
+							.account(t.getAccountFrom())
+							.category(t.getExpenseCategory())
+							.limitSum(new BigDecimal(1000))
+							.build()
+			);
+			return isCheckLimitExceeded(t);
+		}
+		
 		log.info("Limits found: {}", limits);
 		Limit applicableLimit = null;
+		
 		
 		for (Limit limit : limits) {
 			if (limit.getLimitDatetime().isBefore(t.getDatetime())) {
