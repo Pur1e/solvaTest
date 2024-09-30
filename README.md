@@ -59,7 +59,7 @@ POST http://localhost:8080/api/v1/client/limits
 
 ### Получение отчета о превышении лимита
 
-GET http://localhost:8080/api/v1/client/transactions/limit-exceeded?userId=<account>
+GET http://localhost:8080/api/v1/client/transactions/limit-exceeded?account=<account>
 
 "account=(String 10 characters, digits)"
 
